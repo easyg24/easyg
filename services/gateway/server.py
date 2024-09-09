@@ -8,7 +8,7 @@ app = FastAPI(title="api")
 
 @app.post("/")
 async def plot_request(upload_file: UploadFile = File(...)):
-    return {"file": "File received"}
+    return {"file": "File received."}
 
 
 def run():
