@@ -2,7 +2,8 @@ import os
 import pytest
 
 from fastapi.testclient import TestClient
-from server import app
+from services.gateway.server import app
+from services.plotter.models import Configurations
 
 
 client = TestClient(app)

@@ -1,14 +1,33 @@
+import io
+import sys
+
 import uvicorn
 from decouple import config
-from fastapi import FastAPI, File, UploadFile
+from pydantic import Json
+from typing import Optional
+from fastapi import FastAPI, File, UploadFile, Form
+from fastapi.responses import FileResponse
+import PIL.Image as Image
+
+sys.path.append(".")
+from services.plotter.plotter import graph_builder
+from services.plotter.models import Configurations
 
 
-app = FastAPI(title="api")
+app = FastAPI(title="gateway")
 
 
-@app.post("/")
-async def plot_request(upload_file: UploadFile = File(...)):
-    return {"file": "File received."}
+@app.post("/", responses = {200:{"content": {"image/png": {}}}})
+async def plot_request(
+    file: Optional[UploadFile] = File(None), 
+    configs: Optional[Json[Configurations]] = Form(None)):
+    
+    response = graph_builder(file, configs)
+
+    image = Image.open(io.BytesIO(response))
+    image.save('services\\plotter\\tmp\\test.png')
+
+    return FileResponse('services\\plotter\\tmp\\test.png')
 
 
 def run():
