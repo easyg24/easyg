@@ -17,17 +17,18 @@ from services.plotter.models import Configurations
 app = FastAPI(title="gateway")
 
 
-@app.post("/", responses = {200:{"content": {"image/png": {}}}})
+@app.post("/", responses={200: {"content": {"image/png": {}}}})
 async def plot_request(
-    file: Optional[UploadFile] = File(None), 
-    configs: Optional[Json[Configurations]] = Form(None)):
-    
+    file: Optional[UploadFile] = File(None),
+    configs: Optional[Json[Configurations]] = Form(None),
+):
+
     response = graph_builder(file, configs)
 
     image = Image.open(io.BytesIO(response))
-    image.save('services\\plotter\\tmp\\test.png')
+    image.save("services\\plotter\\tmp\\test.png")
 
-    return FileResponse('services\\plotter\\tmp\\test.png')
+    return FileResponse("services\\plotter\\tmp\\test.png")
 
 
 def run():
