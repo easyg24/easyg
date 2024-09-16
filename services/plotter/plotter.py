@@ -4,7 +4,7 @@ import PIL.Image as Image
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from models import Configurations
+from services.plotter.models import Configurations
 
 
 def get_data(file_path):
@@ -26,8 +26,14 @@ def plot_builder(data):
     plt.scatter(data.index, data.y)
 
 
-def graph_builder(data, configs):
+def graph_builder(file, configs):
     fig = plt.figure()
+
+    if not configs:
+        configs = Configurations()
+
+    if file:
+        data = get_data(file.file)
 
     # TODO: validator()
     frame_builder(configs=configs)
@@ -37,21 +43,3 @@ def graph_builder(data, configs):
     fig.savefig(buffer, format="png")
 
     return buffer.getvalue()
-
-
-def run():
-    # running from local file
-    file_path = "../../tests/data/test.csv"
-    configurations = Configurations(
-        title="This is the title", xlabel="x axis", ylabel="y axis", plot_color="green"
-    )
-
-    data = get_data(file_path)
-    response = graph_builder(data, configurations)
-
-    image = Image.open(BytesIO(response))
-    image.save("./tmp/test.png")
-
-
-if __name__ == "__main__":
-    run()
