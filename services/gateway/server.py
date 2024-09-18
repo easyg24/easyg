@@ -30,6 +30,9 @@ async def plot_request(
 
     return FileResponse("services\\plotter\\tmp\\test.png")
 
+@app.get("/")
+async def default():
+    return {"Hello": "World"}
 
 def run():
     host = config("SERVER_HOST")
