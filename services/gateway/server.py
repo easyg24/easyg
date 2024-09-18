@@ -26,10 +26,13 @@ async def plot_request(
     response = graph_builder(file, configs)
 
     image = Image.open(io.BytesIO(response))
-    image.save("services\\plotter\\tmp\\test.png")
+    image.save("services\\plotter\\tmp\\tmp.png")
 
-    return FileResponse("services\\plotter\\tmp\\test.png")
+    return FileResponse("services\\plotter\\tmp\\tmp.png")
 
+@app.get("/")
+async def default():
+    return {"Hello": "World"}
 
 def run():
     host = config("SERVER_HOST")
