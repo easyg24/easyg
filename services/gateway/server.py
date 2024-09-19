@@ -5,7 +5,7 @@ import uvicorn
 from decouple import config
 from pydantic import Json
 from typing import Optional
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile, Form, HTTPException
 from fastapi.responses import FileResponse
 import PIL.Image as Image
 
@@ -22,6 +22,9 @@ async def plot_request(
     file: Optional[UploadFile] = File(None),
     configs: Optional[Json[Configurations]] = Form(None),
 ):
+    # handle client-side bad requests
+    if not file:
+        raise HTTPException(status_code=400, detail="File not provided")
 
     response = graph_builder(file, configs)
 
@@ -33,6 +36,7 @@ async def plot_request(
 @app.get("/")
 async def default():
     return {"Hello": "World"}
+
 
 def run():
     host = config("SERVER_HOST")
