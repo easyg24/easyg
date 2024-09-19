@@ -7,18 +7,22 @@ def test_call_endpoint():
     assert response.status_code == 200
 
 
+def test_no_file_provided():
+    payload = {
+        "title": "This is a title"
+    }
+
+    response = r.post(url=config("PLOTTER_ENDPOINT"), params=payload)
+    assert response.status_code == 400
+
+
 def test_plot_2d():
     file_path = "./data/test.csv"
 
     files = {("file", open(file_path, "rb"))}
     payload = {
-        "title": "This is a title",
-        "xlabel": "x label",
-        "ylabel": "y label",
-        "grid": True,
-        "plot_color": "blue"
+        "title": "This is a title"
     }
 
     response = r.post(url=config("PLOTTER_ENDPOINT"), files=files, params=payload)
     assert response.status_code == 200
-    print(response.content)
