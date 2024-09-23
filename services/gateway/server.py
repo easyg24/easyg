@@ -33,6 +33,7 @@ async def plot_request(
 
     return FileResponse("services\\plotter\\tmp\\tmp.png")
 
+
 @app.get("/")
 async def default():
     return {"Hello": "World"}
