@@ -11,28 +11,29 @@ import sys
 
 sys.path.append(".")
 from services.plotter.models import Configurations
+from services.plotter.plotter import graph_builder, get_data
 
 
-def get_data(file_path):
-    df = pd.read_csv(file_path, sep=",", index_col=0)
-    return df
+# def get_data(file_path):
+#     df = pd.read_csv(file_path, sep=",", index_col=0)
+#     return df
 
 
-def frame_builder(configs):
-    plt.title(configs.title)
-    plt.xlabel(configs.xlabel)
-    plt.ylabel(configs.ylabel)
-    plt.grid(configs.grid)
+# def frame_builder(configs):
+#     plt.title(configs.title)
+#     plt.xlabel(configs.xlabel)
+#     plt.ylabel(configs.ylabel)
+#     plt.grid(configs.grid)
 
 
-def plot_builder(data, index, funcs):
-    # TODO: make it general for all plots
-    for i in index:
-        plt.plot(data.index, data[i], "o", label=i + " data")
+# def plot_builder(data, index, funcs):
+#     # TODO: make it general for all plots
+#     for i in index:
+#         plt.plot(data.index, data[i], "o", label=i + " data")
 
-    for i, func in zip(index, funcs):
-        plt.plot(data.index, func, label=i + " fit")
-    plt.legend()
+#     for i, func in zip(index, funcs):
+#         plt.plot(data.index, func, label=i + " fit")
+#     plt.legend()
 
 
 # Quadratic
@@ -55,22 +56,22 @@ def fit_builder(data, index, function):
     return function(data.index, *parameters), covariance
 
 
-def graph_builder(data, configs):
-    func1, cov1 = fit_builder(data, "y", Quadratic)
-    func2, cov2 = fit_builder(data, "z", Gauss)
+# def graph_builder_tmp(data, configs, funcs):
+#     func1, cov1 = fit_builder(data, "y", Quadratic)
+#     func2, cov2 = fit_builder(data, "z", Gauss)
 
-    fig = plt.figure()
+#     fig = plt.figure()
 
-    # TODO: validator()
-    frame_builder(configs=configs)
-    plot_builder(data=data, index=["y", "z"], funcs=[func1, func2])
+#     # TODO: validator()
+#     frame_builder(configs=configs)
+#     plot_builder(data=data, index=["y", "z"], funcs=[func1, func2])
 
-    plt.show()
+#     plt.show()
 
-    buffer = BytesIO()
-    fig.savefig(buffer, format="png")
+#     buffer = BytesIO()
+#     fig.savefig(buffer, format="png")
 
-    return buffer.getvalue()
+#     return buffer.getvalue()
 
 
 def run():
@@ -81,10 +82,13 @@ def run():
     )
 
     data = get_data(file_path)
-    response = graph_builder(data, configurations)
+    func1, cov1 = fit_builder(data, "y", Quadratic)
+    func2, cov2 = fit_builder(data, "z", Gauss)
+
+    response = graph_builder(file_path, configurations, funcs=[func1, func2])
 
     image = Image.open(BytesIO(response))
-    image.save("services/fitter/tmp/test.png")
+    image.save("services/fitter/tmp/test1.png")
 
 
 if __name__ == "__main__":

@@ -19,25 +19,28 @@ def frame_builder(configs):
     plt.grid(configs.grid)
 
 
-def plot_builder(data):
-    # here we are just considering one plot labeled y
+def plot_builder(data, index, funcs):
     # TODO: make it general for all plots
-    plt.plot(data)
-    plt.scatter(data.index, data.y)
+    for i in index:
+        plt.plot(data.index, data[i], "o", label=i + " data")
+
+    for i, func in zip(index, funcs):
+        plt.plot(data.index, func, label=i + " fit")
+    plt.legend()
 
 
-def graph_builder(file, configs):
+def graph_builder(file, configs, funcs):
     fig = plt.figure()
 
     if not configs:
         configs = Configurations()
 
     if file:
-        data = get_data(file.file)
+        data = get_data(file)#.file)
 
     # TODO: validator()
     frame_builder(configs=configs)
-    plot_builder(data=data)
+    plot_builder(data=data, index=["y", "z"], funcs=funcs)
 
     buffer = BytesIO()
     fig.savefig(buffer, format="png")
