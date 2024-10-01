@@ -11,28 +11,7 @@ import sys
 
 sys.path.append(".")
 from services.plotter.models import Configurations
-
-
-def get_data(file_path):
-    df = pd.read_csv(file_path, sep=",", index_col=0)
-    return df
-
-
-def frame_builder(configs):
-    plt.title(configs.title)
-    plt.xlabel(configs.xlabel)
-    plt.ylabel(configs.ylabel)
-    plt.grid(configs.grid)
-
-
-def plot_builder(data, index, funcs):
-    # TODO: make it general for all plots
-    for i in index:
-        plt.plot(data.index, data[i], "o", label=i + " data")
-
-    for i, func in zip(index, funcs):
-        plt.plot(data.index, func, label=i + " fit")
-    plt.legend()
+from services.plotter.plotter import graph_builder, get_data
 
 
 # Quadratic
@@ -55,24 +34,6 @@ def fit_builder(data, index, function):
     return function(data.index, *parameters), covariance
 
 
-def graph_builder(data, configs):
-    func1, cov1 = fit_builder(data, "y", Quadratic)
-    func2, cov2 = fit_builder(data, "z", Gauss)
-
-    fig = plt.figure()
-
-    # TODO: validator()
-    frame_builder(configs=configs)
-    plot_builder(data=data, index=["y", "z"], funcs=[func1, func2])
-
-    plt.show()
-
-    buffer = BytesIO()
-    fig.savefig(buffer, format="png")
-
-    return buffer.getvalue()
-
-
 def run():
     # running from local file
     file_path = "./tests/data/test.csv"
@@ -81,10 +42,13 @@ def run():
     )
 
     data = get_data(file_path)
-    response = graph_builder(data, configurations)
+    func1, cov1 = fit_builder(data, "y", Quadratic)
+    func2, cov2 = fit_builder(data, "z", Gauss)
+
+    response = graph_builder(file_path, configurations, funcs=[func1, func2])
 
     image = Image.open(BytesIO(response))
-    image.save("services/fitter/tmp/test.png")
+    image.save("services/fitter/tmp/test1.png")
 
 
 if __name__ == "__main__":
