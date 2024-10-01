@@ -14,28 +14,6 @@ from services.plotter.models import Configurations
 from services.plotter.plotter import graph_builder, get_data
 
 
-# def get_data(file_path):
-#     df = pd.read_csv(file_path, sep=",", index_col=0)
-#     return df
-
-
-# def frame_builder(configs):
-#     plt.title(configs.title)
-#     plt.xlabel(configs.xlabel)
-#     plt.ylabel(configs.ylabel)
-#     plt.grid(configs.grid)
-
-
-# def plot_builder(data, index, funcs):
-#     # TODO: make it general for all plots
-#     for i in index:
-#         plt.plot(data.index, data[i], "o", label=i + " data")
-
-#     for i, func in zip(index, funcs):
-#         plt.plot(data.index, func, label=i + " fit")
-#     plt.legend()
-
-
 # Quadratic
 def Quadratic(x, A, B):
     y = A * x**2 + B
@@ -54,24 +32,6 @@ def fit_builder(data, index, function):
     parameters, covariance = curve_fit(function, x, y)
 
     return function(data.index, *parameters), covariance
-
-
-# def graph_builder_tmp(data, configs, funcs):
-#     func1, cov1 = fit_builder(data, "y", Quadratic)
-#     func2, cov2 = fit_builder(data, "z", Gauss)
-
-#     fig = plt.figure()
-
-#     # TODO: validator()
-#     frame_builder(configs=configs)
-#     plot_builder(data=data, index=["y", "z"], funcs=[func1, func2])
-
-#     plt.show()
-
-#     buffer = BytesIO()
-#     fig.savefig(buffer, format="png")
-
-#     return buffer.getvalue()
 
 
 def run():
