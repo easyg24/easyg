@@ -24,19 +24,22 @@ def plot_builder(data, index, funcs):
     for i in index:
         plt.plot(data.index, data[i], "o", label=i + " data")
 
-    for i, func in zip(index, funcs):
-        plt.plot(data.index, func, label=i + " fit")
+    if funcs:
+        for i, func in zip(index, funcs):
+            plt.plot(data.index, func, label=i + " fit")
     plt.legend()
 
 
-def graph_builder(file, configs, funcs):
+def graph_builder_plotter(file, configs, funcs=None):
     fig = plt.figure()
 
     if not configs:
         configs = Configurations()
 
-    if file:
-        data = get_data(file)#.file)
+    if not funcs:
+        data = get_data(file.file)
+    else:
+        data = file
 
     # TODO: validator()
     frame_builder(configs=configs)
