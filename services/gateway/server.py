@@ -10,14 +10,15 @@ from fastapi.responses import FileResponse
 import PIL.Image as Image
 
 sys.path.append(".")
-from services.plotter.plotter import graph_builder
 from services.plotter.models import Configurations
+from services.plotter.plotter import graph_builder_plotter
+from services.fitter.fitter import graph_builder_fitter
 
 
 app = FastAPI(title="gateway")
 
 
-@app.post("/", responses={200: {"content": {"image/png": {}}}})
+@app.post("/plotter", responses={200: {"content": {"image/png": {}}}})
 async def plot_request(
     file: Optional[UploadFile] = File(None),
     configs: Optional[Json[Configurations]] = Form(None),
@@ -26,12 +27,30 @@ async def plot_request(
     if not file:
         raise HTTPException(status_code=400, detail="File not provided")
 
-    response = graph_builder(file, configs)
+    response = graph_builder_plotter(file, configs)
 
     image = Image.open(io.BytesIO(response))
     image.save("services\\plotter\\tmp\\tmp.png")
 
     return FileResponse("services\\plotter\\tmp\\tmp.png")
+
+
+@app.post("/fitter", responses={200: {"content": {"image/png": {}}}})
+async def plot_request(
+    file: Optional[UploadFile] = File(None),
+    configs: Optional[Json[Configurations]] = Form(None),
+):
+    # handle client-side bad requests
+    if not file:
+        raise HTTPException(status_code=400, detail="File not provided")
+
+    response = graph_builder_fitter(file, configs, funcs=True)
+
+    image = Image.open(io.BytesIO(response))
+    image.save("services\\plotter\\tmp\\tmp.png")
+
+    return FileResponse("services\\plotter\\tmp\\tmp.png")
+
 
 
 @app.get("/")
